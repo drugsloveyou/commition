@@ -1,0 +1,9 @@
+# https://help.github.com/articles/ignoring-files/ ignore文件参考
+
+# dependencies
+/node_modules
+
+# mise
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

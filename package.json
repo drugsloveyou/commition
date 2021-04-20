@@ -1,0 +1,35 @@
+{
+  "name": "commition",
+  "version": "1.1.1",
+  "description": "git commit configuration.",
+  "author": "xiezuobing<435321508@qq.com>",
+  "license": "MIT",
+  "private": false,
+  "bin": {
+    "commition": "./bin/commition.js"
+  },
+  "dependencies": {
+    "boxen": "^5.0.1",
+    "chalk": "^4.1.0",
+    "detect-indent": "^6.0.0",
+    "execa": "^5.0.0",
+    "find-node-modules": "^2.1.2",
+    "inquirer": "^8.0.0",
+    "is-git-clean": "^1.1.0",
+    "lodash": "^4.17.21",
+    "meow": "^9.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1",
+    "commitizen": "^4.2.3",
+    "conventional-changelog": "^3.1.24",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^6.0.0"
+  },
+  "scripts": {
+    "test": "",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "prepare": "husky install"
+  }
+}
