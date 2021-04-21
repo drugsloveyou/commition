@@ -121,6 +121,10 @@ module.exports = function ({ input, flags }) {
         console.log(chalk.yellowBright(`.husky/prepare-commit-msg file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['prepare-commit-msg']}'`))
       }
     }
+    if(packageJsonContent.scripts && packageJsonContent.scripts.prepare) {
+      delete packageJsonContent.scripts.prepare;
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJsonContent, null, indent) + '\n');
+    }
 
     console.log(utils.logSymbols.success, chalk.magentaBright('installed husky hooks.'));
   }
