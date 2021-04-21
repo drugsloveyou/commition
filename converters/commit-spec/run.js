@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const detectIndent = require('detect-indent');
 const execa = require('execa');
 const utils = require('../../src/utils.js')
 const _ = require('lodash');
@@ -13,7 +12,7 @@ const cliConfig = {
 
 module.exports = function ({ input, flags }) {
   const projectRootDir = utils.getNearestProjectRootDirectory();
-  const projectNodeModuleDir =  utils.getNearestNodeModulesDirectory();
+  const projectNodeModuleDir = utils.getNearestNodeModulesDirectory();
   const isYarn = fs.existsSync(path.join(projectRootDir, 'yarn.lock'));
   const args = {};
   if (isYarn) {
@@ -28,10 +27,7 @@ module.exports = function ({ input, flags }) {
     args.exact = '--save-exact';
   };
   // package.json相关
-  const packageJsonPath = path.join(projectRootDir, 'package.json');
-  const packageJsonString = fs.readFileSync(packageJsonPath, 'utf-8');
-  const indent = detectIndent(packageJsonString).indent || '  ';
-  const packageJsonContent = JSON.parse(packageJsonString);
+  const { indent, packageJsonPath, packageJsonContent } = utils.getPackageJson();
   const isHusky4 = packageJsonContent.husky; //是否配置了husku4，如果没有就安装最新版本的husky
   const packages = ['commitizen', 'cz-conventional-changelog', 'conventional-changelog'];
   const isInstalledHuskyPackage = (packageJsonContent.devDependencies && packageJsonContent.devDependencies.husky || packageJsonContent.dependencies && packageJsonContent.dependencies.husky)
@@ -39,7 +35,7 @@ module.exports = function ({ input, flags }) {
     packages.push('husky')
   }
   const hasInstalledCommitlint = fs.existsSync(path.join(projectNodeModuleDir, '@commitlint'));
-  if(!hasInstalledCommitlint) {
+  if (!hasInstalledCommitlint) {
     packages.push('@commitlint/cli');
     packages.push('@commitlint/config-conventional');
   }
@@ -57,14 +53,13 @@ module.exports = function ({ input, flags }) {
     // note: 初始化
     utils.executeCommand(
       `commitizen init cz-conventional-changelog ${args.yarn} ${args.dev} ${args.exact} ${flags.force ? '--force' : ''}`,
-      {...cliConfig, shell: '/bin/bash', cwd:  process.cwd()}
+      { ...cliConfig, shell: '/bin/bash', cwd: process.cwd() }
     );
     console.log(utils.logSymbols.success, chalk.magentaBright('installed git commit log flow configuration.'));
   }
   // note: 配置changelog相关命令
   {
-    const packageJsonString = fs.readFileSync(packageJsonPath, 'utf-8');
-    const packageJsonContent = JSON.parse(packageJsonString);
+    const { packageJsonContent } = utils.getPackageJson();
     const changelogAdaterConfig = { scripts: { 'changelog': 'conventional-changelog -p angular -i CHANGELOG.md -s' } }
 
     if (!packageJsonContent.scripts) {
@@ -96,8 +91,7 @@ module.exports = function ({ input, flags }) {
 
   // note: 判断与安装husky
   {
-    const packageJsonString = fs.readFileSync(packageJsonPath, 'utf-8');
-    const packageJsonContent = JSON.parse(packageJsonString);
+    const { packageJsonContent } = utils.getPackageJson();
     const huskyAdaterConfig = {
       husky: {
         hooks: {
@@ -111,18 +105,18 @@ module.exports = function ({ input, flags }) {
     } else {
 
       const huskyConfigPath = path.join(projectRootDir, '.husky');
-      if(!fs.existsSync(huskyConfigPath)) {
-        utils.executeCommand(`npx husky-init`, {...cliConfig, shell: '/bin/bash'});
+      if (!fs.existsSync(huskyConfigPath)) {
+        utils.executeCommand(`npx husky-init`, { ...cliConfig, shell: '/bin/bash' });
         fs.unlinkSync(path.join(huskyConfigPath, 'pre-commit'));
       }
-      if(!fs.existsSync(path.join(huskyConfigPath, 'commit-msg'))) {
-        utils.executeCommand(`npx husky add .husky/commit-msg 'npx --no-install commitlint --edit $1'`, {...cliConfig, shell: '/bin/bash'});
+      if (!fs.existsSync(path.join(huskyConfigPath, 'commit-msg'))) {
+        utils.executeCommand(`npx husky add .husky/commit-msg 'npx --no-install commitlint --edit $1'`, { ...cliConfig, shell: '/bin/bash' });
       } else {
         console.log(chalk.yellowBright(`.husky/commit-msg file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['commit-msg']}'`))
       }
 
-      if(!fs.existsSync(path.join(huskyConfigPath, 'prepare-commit-msg'))) {
-        utils.executeCommand(`npx husky add .husky/prepare-commit-msg '${huskyAdaterConfig.husky.hooks['prepare-commit-msg']}'`, {...cliConfig,shell: '/bin/bash'});
+      if (!fs.existsSync(path.join(huskyConfigPath, 'prepare-commit-msg'))) {
+        utils.executeCommand(`npx husky add .husky/prepare-commit-msg '${huskyAdaterConfig.husky.hooks['prepare-commit-msg']}'`, { ...cliConfig, shell: '/bin/bash' });
       } else {
         console.log(chalk.yellowBright(`.husky/prepare-commit-msg file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['prepare-commit-msg']}'`))
       }

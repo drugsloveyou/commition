@@ -1,6 +1,8 @@
+const fs = require('fs');
 const path = require('path');
 const execa = require('execa');
 const chalk = require('chalk')
+const detectIndent = require('detect-indent');
 const findNodeModules = require('find-node-modules');
 
 function getNearestNodeModulesDirectory() {
@@ -54,12 +56,23 @@ function isUnicodeSupported() {
 
 
 function getPackageJson(){
+  const projectRootDir = getNearestProjectRootDirectory();
+  const packageJsonPath = path.join(projectRootDir, 'package.json');
+  const packageJsonString = fs.readFileSync(packageJsonPath, 'utf-8');
+  const indent = detectIndent(packageJsonString).indent || '  ';
+  const packageJsonContent = JSON.parse(packageJsonString);
 
+  return {
+    indent,
+    packageJsonContent,
+    packageJsonPath
+  }
 }
 
 module.exports = {
 	getNearestNodeModulesDirectory: getNearestNodeModulesDirectory,
 	getNearestProjectRootDirectory: getNearestProjectRootDirectory,
 	executeCommand: executeCommand,
-  logSymbols: logSymbols
+  logSymbols: logSymbols,
+  getPackageJson: getPackageJson
 }
