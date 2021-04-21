@@ -36,3 +36,4 @@ npx @mi/commition commit-spec
 
 - [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog) – Generate a changelog from conventional commit history
 - [commitlint](https://github.com/conventional-changelog/commitlint) - Lint commit messages
+- [commitizen](https://github.com/commitizen/cz-cli) - Simple commit conventions for internet citizens.
