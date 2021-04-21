@@ -53,7 +53,7 @@ module.exports = function ({ input, flags }) {
     // note: 初始化
     utils.executeCommand(
       `commitizen init cz-conventional-changelog ${args.yarn} ${args.dev} ${args.exact} ${flags.force ? '--force' : ''}`,
-      { ...cliConfig, shell: '/bin/bash', cwd: process.cwd() }
+      { ...cliConfig, shell: true, cwd: process.cwd() }
     );
     console.log(utils.logSymbols.success, chalk.magentaBright('installed git commit log flow configuration.'));
   }
@@ -106,17 +106,17 @@ module.exports = function ({ input, flags }) {
 
       const huskyConfigPath = path.join(projectRootDir, '.husky');
       if (!fs.existsSync(huskyConfigPath)) {
-        utils.executeCommand(`npx husky-init`, { ...cliConfig, shell: '/bin/bash' });
+        utils.executeCommand(`npx husky-init`, { ...cliConfig, shell: true });
         fs.unlinkSync(path.join(huskyConfigPath, 'pre-commit'));
       }
       if (!fs.existsSync(path.join(huskyConfigPath, 'commit-msg'))) {
-        utils.executeCommand(`npx husky add .husky/commit-msg 'npx --no-install commitlint --edit $1'`, { ...cliConfig, shell: '/bin/bash' });
+        utils.executeCommand(`npx husky add .husky/commit-msg 'npx --no-install commitlint --edit $1'`, { ...cliConfig, shell: true });
       } else {
         console.log(chalk.yellowBright(`.husky/commit-msg file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['commit-msg']}'`))
       }
 
       if (!fs.existsSync(path.join(huskyConfigPath, 'prepare-commit-msg'))) {
-        utils.executeCommand(`npx husky add .husky/prepare-commit-msg '${huskyAdaterConfig.husky.hooks['prepare-commit-msg']}'`, { ...cliConfig, shell: '/bin/bash' });
+        utils.executeCommand(`npx husky add .husky/prepare-commit-msg '${huskyAdaterConfig.husky.hooks['prepare-commit-msg']}'`, { ...cliConfig, shell: true });
       } else {
         console.log(chalk.yellowBright(`.husky/prepare-commit-msg file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['prepare-commit-msg']}'`))
       }
