@@ -28,7 +28,7 @@ Usage
 执行以下命令即可初始化
 
 ```bash
-npx @mi/commition commit-spec
+npx commition commit-spec
 ```
 
 
