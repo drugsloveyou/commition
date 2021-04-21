@@ -11,18 +11,18 @@
 目前只支持 commit-spec(commit log标准)
 ```
 Usage
-   $ npx commition <converter> <...options>
+  $ npx commition <converter> <...options>
 
-   converter     One of the choices from under.
+  converter     One of the choices from under.
 
-    - commit-spec:  Add git commit specification for gitlab or github commit log.  [可使用]
-    - editorconfig: Add .editorconfig file for Editor configuration.               [开发中]
-    - gitlab-ci:    Add gitlab ci for cloud MICE template.                         [开发中]
+  - commit-spec:  Add git commit specification for gitlab or github commit log.  [可使用]
+  - editorconfig: Add .editorconfig file for Editor configuration.               [开发中]
+  - gitlab-ci:    Add gitlab ci for cloud MICE template.                         [开发中]
 
-  Options
+Options
 
-   --force       Bypass Git safety checks and forcity run commition cli. 
-   --help        help.
+  --force       Bypass Git safety checks and forcity run commition cli. 
+  --help        help.
 ```
 
 执行以下命令即可初始化
