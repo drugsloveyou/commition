@@ -13,6 +13,7 @@ const cliConfig = {
 
 module.exports = function ({ input, flags }) {
   const projectRootDir = utils.getNearestProjectRootDirectory();
+  const projectNodeModuleDir =  utils.getNearestNodeModulesDirectory();
   const isYarn = fs.existsSync(path.join(projectRootDir, 'yarn.lock'));
   const args = {};
   if (isYarn) {
@@ -37,7 +38,7 @@ module.exports = function ({ input, flags }) {
   if (!isHusky4 && !isInstalledHuskyPackage) {
     packages.push('husky')
   }
-  const hasInstalledCommitlint = fs.existsSync(path.join(utils.getNearestNodeModulesDirectory(), '@commitlint'));
+  const hasInstalledCommitlint = fs.existsSync(path.join(projectNodeModuleDir, '@commitlint'));
   if(!hasInstalledCommitlint) {
     packages.push('@commitlint/cli');
     packages.push('@commitlint/config-conventional');
@@ -51,15 +52,19 @@ module.exports = function ({ input, flags }) {
     );
 
     console.log(utils.logSymbols.success, chalk.magentaBright('installed dependencies package.'));
+  }
+  {
     // note: 初始化
     utils.executeCommand(
       `commitizen init cz-conventional-changelog ${args.yarn} ${args.dev} ${args.exact} ${flags.force ? '--force' : ''}`,
-      cliConfig
+      {...cliConfig, shell: '/bin/bash', cwd:  process.cwd()}
     );
     console.log(utils.logSymbols.success, chalk.magentaBright('installed git commit log flow configuration.'));
   }
   // note: 配置changelog相关命令
   {
+    const packageJsonString = fs.readFileSync(packageJsonPath, 'utf-8');
+    const packageJsonContent = JSON.parse(packageJsonString);
     const changelogAdaterConfig = { scripts: { 'changelog': 'conventional-changelog -p angular -i CHANGELOG.md -s' } }
 
     if (!packageJsonContent.scripts) {
@@ -91,6 +96,8 @@ module.exports = function ({ input, flags }) {
 
   // note: 判断与安装husky
   {
+    const packageJsonString = fs.readFileSync(packageJsonPath, 'utf-8');
+    const packageJsonContent = JSON.parse(packageJsonString);
     const huskyAdaterConfig = {
       husky: {
         hooks: {
@@ -106,6 +113,7 @@ module.exports = function ({ input, flags }) {
       const huskyConfigPath = path.join(projectRootDir, '.husky');
       if(!fs.existsSync(huskyConfigPath)) {
         utils.executeCommand(`npx husky-init`, {...cliConfig, shell: '/bin/bash'});
+        fs.unlinkSync(path.join(huskyConfigPath, 'pre-commit'));
       }
       if(!fs.existsSync(path.join(huskyConfigPath, 'commit-msg'))) {
         utils.executeCommand(`npx husky add .husky/commit-msg 'npx --no-install commitlint --edit $1'`, {...cliConfig, shell: '/bin/bash'});

@@ -53,6 +53,10 @@ function isUnicodeSupported() {
 }
 
 
+function getPackageJson(){
+
+}
+
 module.exports = {
 	getNearestNodeModulesDirectory: getNearestNodeModulesDirectory,
 	getNearestProjectRootDirectory: getNearestProjectRootDirectory,
