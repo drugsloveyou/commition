@@ -29,7 +29,7 @@ module.exports = function ({ input, flags }) {
   // package.json相关
   const { indent, packageJsonPath, packageJsonContent } = utils.getPackageJson();
   const isHusky4 = packageJsonContent.husky; //是否配置了husku4，如果没有就安装最新版本的husky
-  const packages = ['commitizen', 'cz-conventional-changelog', 'conventional-changelog'];
+  const packages = ['commitizen', 'cz-conventional-changelog', 'conventional-changelog', 'lint-staged'];
   const isInstalledHuskyPackage = (packageJsonContent.devDependencies && packageJsonContent.devDependencies.husky || packageJsonContent.dependencies && packageJsonContent.dependencies.husky)
   if (!isHusky4 && !isInstalledHuskyPackage) {
     packages.push('husky')
@@ -97,6 +97,7 @@ module.exports = function ({ input, flags }) {
         hooks: {
           "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
           "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+          "pre-commit": "lint-staged",
         }
       }
     };
@@ -120,8 +121,30 @@ module.exports = function ({ input, flags }) {
       } else {
         console.log(chalk.yellowBright(`.husky/prepare-commit-msg file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['prepare-commit-msg']}'`))
       }
+
+      if (!fs.existsSync(path.join(huskyConfigPath, 'pre-comomit'))) {
+        utils.executeCommand(`npx husky add .husky/pre-comomit '${huskyAdaterConfig.husky.hooks['pre-comomit']}'`, { ...cliConfig, shell: true });
+      } else {
+        console.log(chalk.yellowBright(`.husky/pre-comomit file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['pre-comomit']}'`))
+      }
     }
 
     console.log(utils.logSymbols.success, chalk.magentaBright('installed husky hooks.'));
+  }
+
+  // note: lint-staged配置
+  {
+    const { packageJsonContent } = utils.getPackageJson();
+    const lintStagedConfig = {
+      "lint-staged": {
+        "*.{js,jsx,ts,tsx,vue}": "eslint --cache"
+      }
+    };
+    if(!packageJsonContent["lint-staged"]) packageJsonContent["lint-staged"] = {}
+    const newPackageJsonContent = _.merge(packageJsonContent, lintStagedConfig);
+
+    fs.writeFileSync(packageJsonPath, JSON.stringify(newPackageJsonContent, null, indent) + '\n');
+
+    console.log(utils.logSymbols.success, chalk.magentaBright('installed [lint-staged] script.'));
   }
 }
