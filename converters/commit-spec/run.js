@@ -97,7 +97,7 @@ module.exports = function ({ input, flags }) {
         hooks: {
           "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
           "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-          "pre-commit": "lint-staged",
+          "pre-commit": "npx lint-staged",
         }
       }
     };
@@ -123,9 +123,9 @@ module.exports = function ({ input, flags }) {
       }
 
       if (!fs.existsSync(path.join(huskyConfigPath, 'pre-commit'))) {
-        utils.executeCommand(`npx husky add .husky/pre-comomit '${huskyAdaterConfig.husky.hooks['pre-commit']}'`, { ...cliConfig, shell: true });
+        utils.executeCommand(`npx husky add .husky/pre-commit '${huskyAdaterConfig.husky.hooks['pre-commit']}'`, { ...cliConfig, shell: true });
       } else {
-        console.log(chalk.yellowBright(`.husky/pre-comomit file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['pre-commit']}'`))
+        console.log(chalk.yellowBright(`.husky/pre-commit file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['pre-commit']}'`))
       }
     }
 
