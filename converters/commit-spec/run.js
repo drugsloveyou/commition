@@ -122,10 +122,10 @@ module.exports = function ({ input, flags }) {
         console.log(chalk.yellowBright(`.husky/prepare-commit-msg file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['prepare-commit-msg']}'`))
       }
 
-      if (!fs.existsSync(path.join(huskyConfigPath, 'pre-comomit'))) {
-        utils.executeCommand(`npx husky add .husky/pre-comomit '${huskyAdaterConfig.husky.hooks['pre-comomit']}'`, { ...cliConfig, shell: true });
+      if (!fs.existsSync(path.join(huskyConfigPath, 'pre-commit'))) {
+        utils.executeCommand(`npx husky add .husky/pre-comomit '${huskyAdaterConfig.husky.hooks['pre-commit']}'`, { ...cliConfig, shell: true });
       } else {
-        console.log(chalk.yellowBright(`.husky/pre-comomit file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['pre-comomit']}'`))
+        console.log(chalk.yellowBright(`.husky/pre-comomit file has already exists. If you want to change it, add '${huskyAdaterConfig.husky.hooks['pre-commit']}'`))
       }
     }
 
